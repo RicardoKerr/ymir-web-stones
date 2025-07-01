@@ -215,9 +215,9 @@ const StoneViewer = () => {
         
         if (imageBase64) {
           try {
-            // Image dimensions and position
-            const imgWidth = 80; // mm
-            const imgHeight = 60; // mm
+            // Image dimensions and position (increased by 50%)
+            const imgWidth = 120; // mm (was 80mm)
+            const imgHeight = 90; // mm (was 60mm)
             const imgX = (pageWidth - imgWidth) / 2; // Center horizontally
             const imgY = 60; // Position below item name
             
