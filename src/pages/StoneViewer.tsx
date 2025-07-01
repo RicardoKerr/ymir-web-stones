@@ -125,6 +125,22 @@ const StoneViewer = () => {
     setZoomedImage(null);
   };
 
+  // Function to clean text from unsupported characters (emojis, etc.)
+  const cleanText = (text: string): string => {
+    if (!text) return 'N/A';
+    
+    // Remove emojis and other non-printable characters
+    return text
+      .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // emoticons
+      .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // misc symbols
+      .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // transport symbols
+      .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '') // flags
+      .replace(/[\u{2600}-\u{26FF}]/gu, '')   // misc symbols
+      .replace(/[\u{2700}-\u{27BF}]/gu, '')   // dingbats
+      .replace(/\s+/g, ' ')                   // normalize whitespace
+      .trim();
+  };
+
   // Function to load and convert image to base64
   const loadImageAsBase64 = async (imageUrl: string): Promise<string | null> => {
     try {
@@ -217,18 +233,29 @@ const StoneViewer = () => {
         pdf.text('Technical Specifications:', 20, 140);
         
         const specs = [
-          `Category: ${stone.category}`,
-          `Rock type: ${stone.rock_type}`,
-          `Available finishes: ${stone.finishes}`,
-          `Available in: ${stone.available_in}`,
-          `Base color: ${stone.base_color}`,
-          `Characteristics: ${stone.characteristics}`
+          `Category: ${cleanText(stone.category)}`,
+          `Rock type: ${cleanText(stone.rock_type)}`,
+          `Available finishes: ${cleanText(stone.finishes)}`,
+          `Available in: ${cleanText(stone.available_in)}`,
+          `Base color: ${cleanText(stone.base_color)}`,
+          `Characteristics: ${cleanText(stone.characteristics)}`
         ];
         
         let yPosition = 155;
+        const maxWidth = 165; // Maximum width for text (210 - 20 margin left - 25 margin right)
+        
         specs.forEach(spec => {
-          pdf.text(`• ${spec}`, 25, yPosition);
-          yPosition += 8;
+          // Split text into multiple lines if it's too long
+          const lines = pdf.splitTextToSize(`• ${spec}`, maxWidth);
+          
+          // Add each line
+          lines.forEach((line: string) => {
+            pdf.text(line, 25, yPosition);
+            yPosition += 7; // Slightly smaller line spacing
+          });
+          
+          // Add extra space between different specifications
+          yPosition += 2;
         });
       }
       
