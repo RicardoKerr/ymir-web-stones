@@ -330,8 +330,11 @@ const Catalog = () => {
   };
   
   const filteredStones = stones.filter(stone => {
-    const searchRegex = new RegExp(filters.search, 'i');
-    const searchMatch = searchRegex.test(stone.name) || searchRegex.test(stone.characteristics);
+    // Standardized search logic - same as StoneViewer
+    const searchMatch = !filters.search || 
+      stone.name.toLowerCase().includes(filters.search.toLowerCase()) || 
+      (stone.characteristics && stone.characteristics.toLowerCase().includes(filters.search.toLowerCase()));
+    
     const categoryMatch = filters.category === 'all' || stone.category === filters.category;
     const rockTypeMatch = filters.rock_type === 'all' || stone.rock_type === filters.rock_type;
     const colorMatch = filters.base_color === 'all' || stone.base_color === filters.base_color;
