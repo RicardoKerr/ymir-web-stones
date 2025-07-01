@@ -9,225 +9,557 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      argeplan_consultaplanos: {
+      agendamentos: {
         Row: {
-          cidade: string | null
-          cnpj_obrigatorio: boolean | null
-          coparticipacao: string | null
-          destaque: string | null
-          faixa_etaria_max: number | null
-          faixa_etaria_min: number | null
-          id: string
-          nome_plano: string | null
-          operadora: string | null
-          valor: number | null
-        }
-        Insert: {
-          cidade?: string | null
-          cnpj_obrigatorio?: boolean | null
-          coparticipacao?: string | null
-          destaque?: string | null
-          faixa_etaria_max?: number | null
-          faixa_etaria_min?: number | null
-          id?: string
-          nome_plano?: string | null
-          operadora?: string | null
-          valor?: number | null
-        }
-        Update: {
-          cidade?: string | null
-          cnpj_obrigatorio?: boolean | null
-          coparticipacao?: string | null
-          destaque?: string | null
-          faixa_etaria_max?: number | null
-          faixa_etaria_min?: number | null
-          id?: string
-          nome_plano?: string | null
-          operadora?: string | null
-          valor?: number | null
-        }
-        Relationships: []
-      }
-      argeplan_crm: {
-        Row: {
-          canal_origem: string | null
-          cidade: string
-          data_entrada: string | null
-          email: string
-          estado: string
-          id: number
-          nome: string
-          plano_odonto: boolean | null
-          plano_saude: boolean | null
-          score_engajamento: number | null
-          seguro_auto: boolean | null
-          telefone: string
-          ultima_interacao: string | null
-          whats_contact: string | null
-        }
-        Insert: {
-          canal_origem?: string | null
-          cidade: string
-          data_entrada?: string | null
-          email: string
-          estado: string
-          id: number
-          nome: string
-          plano_odonto?: boolean | null
-          plano_saude?: boolean | null
-          score_engajamento?: number | null
-          seguro_auto?: boolean | null
-          telefone: string
-          ultima_interacao?: string | null
-          whats_contact?: string | null
-        }
-        Update: {
-          canal_origem?: string | null
-          cidade?: string
-          data_entrada?: string | null
-          email?: string
-          estado?: string
-          id?: number
-          nome?: string
-          plano_odonto?: boolean | null
-          plano_saude?: boolean | null
-          score_engajamento?: number | null
-          seguro_auto?: boolean | null
-          telefone?: string
-          ultima_interacao?: string | null
-          whats_contact?: string | null
-        }
-        Relationships: []
-      }
-      argeplan_ddd_cidade: {
-        Row: {
-          cidade: string
-          conhecidapor: string | null
-          ddd: number
-          estado: string
-          uf: string
-        }
-        Insert: {
-          cidade: string
-          conhecidapor?: string | null
-          ddd: number
-          estado: string
-          uf: string
-        }
-        Update: {
-          cidade?: string
-          conhecidapor?: string | null
-          ddd?: number
-          estado?: string
-          uf?: string
-        }
-        Relationships: []
-      }
-      argeplan_interacoes_lola: {
-        Row: {
-          canal: string | null
-          cidade: string | null
+          assunto: string
           created_at: string | null
-          data_utc: string | null
-          estado: string | null
-          finalizou_etapa: boolean | null
+          data: string
+          email: string
+          horario: string
           id: string
-          idade: number | null
-          interacao_n: number | null
-          mensagem_lola: string | null
-          mensagem_usuario: string | null
-          nome_lead: string | null
-          remote_jid: string | null
-          session_expired: boolean | null
-          session_id: string | null
-          session_start_utc: string | null
-          status: string | null
-          telefone: string | null
-          tem_cnpj: boolean | null
-          timestamp: number | null
+          nome: string
+          outro_assunto: string | null
+          status: string
+          telefone: string
+          updated_at: string | null
         }
         Insert: {
-          canal?: string | null
-          cidade?: string | null
+          assunto: string
           created_at?: string | null
-          data_utc?: string | null
-          estado?: string | null
-          finalizou_etapa?: boolean | null
+          data: string
+          email: string
+          horario: string
           id?: string
-          idade?: number | null
-          interacao_n?: number | null
-          mensagem_lola?: string | null
-          mensagem_usuario?: string | null
-          nome_lead?: string | null
-          remote_jid?: string | null
-          session_expired?: boolean | null
-          session_id?: string | null
-          session_start_utc?: string | null
-          status?: string | null
-          telefone?: string | null
-          tem_cnpj?: boolean | null
-          timestamp?: number | null
+          nome: string
+          outro_assunto?: string | null
+          status?: string
+          telefone: string
+          updated_at?: string | null
         }
         Update: {
-          canal?: string | null
-          cidade?: string | null
+          assunto?: string
           created_at?: string | null
-          data_utc?: string | null
-          estado?: string | null
-          finalizou_etapa?: boolean | null
+          data?: string
+          email?: string
+          horario?: string
           id?: string
-          idade?: number | null
-          interacao_n?: number | null
-          mensagem_lola?: string | null
-          mensagem_usuario?: string | null
-          nome_lead?: string | null
-          remote_jid?: string | null
-          session_expired?: boolean | null
-          session_id?: string | null
-          session_start_utc?: string | null
-          status?: string | null
-          telefone?: string | null
-          tem_cnpj?: boolean | null
-          timestamp?: number | null
+          nome?: string
+          outro_assunto?: string | null
+          status?: string
+          telefone?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
-      jocrosscorretores: {
+      aralogo_auth: {
         Row: {
-          conversation: string | null
           created_at: string
-          email: string | null
-          id: number
-          Idade: string | null
-          nome: string | null
-          PlanoParaVoceFamiliaEmpresa: string | null
-          PossuiPlanoDeSaude: string | null
-          remoteJid: string | null
-          source: string | null
+          email: string
+          id: string
+          is_admin: boolean
+          senha: string
+          status: string
+          updated_at: string
         }
         Insert: {
-          conversation?: string | null
           created_at?: string
-          email?: string | null
-          id?: number
-          Idade?: string | null
-          nome?: string | null
-          PlanoParaVoceFamiliaEmpresa?: string | null
-          PossuiPlanoDeSaude?: string | null
-          remoteJid?: string | null
-          source?: string | null
+          email: string
+          id?: string
+          is_admin?: boolean
+          senha: string
+          status?: string
+          updated_at?: string
         }
         Update: {
-          conversation?: string | null
           created_at?: string
-          email?: string | null
+          email?: string
+          id?: string
+          is_admin?: boolean
+          senha?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      aralogo_changes: {
+        Row: {
+          changes: Json
+          created_at: string
+          id: string
+          stone_id: number
+          user_email: string | null
+        }
+        Insert: {
+          changes: Json
+          created_at?: string
+          id?: string
+          stone_id: number
+          user_email?: string | null
+        }
+        Update: {
+          changes?: Json
+          created_at?: string
+          id?: string
+          stone_id?: number
+          user_email?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_aralogo_simples"
+            columns: ["stone_id"]
+            isOneToOne: false
+            referencedRelation: "aralogo_simples"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aralogo_simples: {
+        Row: {
+          "Acabamentos Disponíveis": string | null
+          "Caminho da Imagem": string | null
+          Características: string | null
+          Categoria: string | null
+          "Cor Base": string | null
+          "Disponível em": string | null
+          Enable_On_Off: boolean
+          id: number
+          Imagem_Name_Site: string | null
+          Nome: string | null
+          "Tipo de Rocha": string | null
+        }
+        Insert: {
+          "Acabamentos Disponíveis"?: string | null
+          "Caminho da Imagem"?: string | null
+          Características?: string | null
+          Categoria?: string | null
+          "Cor Base"?: string | null
+          "Disponível em"?: string | null
+          Enable_On_Off?: boolean
           id?: number
-          Idade?: string | null
-          nome?: string | null
-          PlanoParaVoceFamiliaEmpresa?: string | null
-          PossuiPlanoDeSaude?: string | null
-          remoteJid?: string | null
+          Imagem_Name_Site?: string | null
+          Nome?: string | null
+          "Tipo de Rocha"?: string | null
+        }
+        Update: {
+          "Acabamentos Disponíveis"?: string | null
+          "Caminho da Imagem"?: string | null
+          Características?: string | null
+          Categoria?: string | null
+          "Cor Base"?: string | null
+          "Disponível em"?: string | null
+          Enable_On_Off?: boolean
+          id?: number
+          Imagem_Name_Site?: string | null
+          Nome?: string | null
+          "Tipo de Rocha"?: string | null
+        }
+        Relationships: []
+      }
+      catalogo_simples: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      material_applications: {
+        Row: {
+          application_name: string
+          created_at: string
+          id: string
+          material_id: string | null
+        }
+        Insert: {
+          application_name: string
+          created_at?: string
+          id?: string
+          material_id?: string | null
+        }
+        Update: {
+          application_name?: string
+          created_at?: string
+          id?: string
+          material_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_applications_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_finishes: {
+        Row: {
+          created_at: string
+          finish_name: string
+          id: string
+          material_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          finish_name: string
+          id?: string
+          material_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          finish_name?: string
+          id?: string
+          material_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_finishes_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          is_primary: boolean
+          material_id: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          is_primary?: boolean
+          material_id?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          is_primary?: boolean
+          material_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_images_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      material_technical_specs: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string | null
+          spec_name: string
+          spec_value: string
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id?: string | null
+          spec_name: string
+          spec_value: string
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string | null
+          spec_name?: string
+          spec_value?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_technical_specs_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      materials: {
+        Row: {
+          base_color: string
+          category: string
+          commercial_name: string
+          created_at: string
+          description: string | null
+          direct_link: string | null
+          id: string
+          is_active: boolean
+          main_image_url: string | null
+          origin: string
+          rock_type: string
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          base_color: string
+          category: string
+          commercial_name: string
+          created_at?: string
+          description?: string | null
+          direct_link?: string | null
+          id?: string
+          is_active?: boolean
+          main_image_url?: string | null
+          origin: string
+          rock_type: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base_color?: string
+          category?: string
+          commercial_name?: string
+          created_at?: string
+          description?: string | null
+          direct_link?: string | null
+          id?: string
+          is_active?: boolean
+          main_image_url?: string | null
+          origin?: string
+          rock_type?: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "materials_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Maturidade_Cliente: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      newsletter_subscriptions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean
+          name: string
+          phone: string | null
+          source: string | null
+          subscribed_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_active?: boolean
+          name: string
+          phone?: string | null
           source?: string | null
+          subscribed_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string | null
+          source?: string | null
+          subscribed_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      "primos-empresa": {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      scraped_data: {
+        Row: {
+          config_id: string | null
+          created_at: string
+          data: Json
+          id: string
+          scraping_type: string
+          status: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          config_id?: string | null
+          created_at?: string
+          data: Json
+          id?: string
+          scraping_type: string
+          status?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          config_id?: string | null
+          created_at?: string
+          data?: Json
+          id?: string
+          scraping_type?: string
+          status?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scraped_data_config_id_fkey"
+            columns: ["config_id"]
+            isOneToOne: false
+            referencedRelation: "scraping_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scraping_configs: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          needs_auth: boolean
+          scraping_type: string
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          needs_auth?: boolean
+          scraping_type: string
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          needs_auth?: boolean
+          scraping_type?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      suppliers: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      user_approvals: {
+        Row: {
+          email: string
+          id: string
+          processed_at: string | null
+          processed_by: string | null
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
