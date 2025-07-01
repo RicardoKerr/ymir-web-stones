@@ -1,1 +1,4 @@
 project_id = "txsagenflvojyadgnnzp"
+
+[functions.auth-handler]
+verify_jwt = false
