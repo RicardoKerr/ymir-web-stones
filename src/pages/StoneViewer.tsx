@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Filter, Search, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Loader2, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { ArrowLeft, Filter, Search, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Loader2, ChevronsLeft, ChevronsRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useImageUpload } from '@/hooks/useImageUpload';
+import jsPDF from 'jspdf';
 
 interface Stone {
   id: string;
@@ -121,6 +122,77 @@ const StoneViewer = () => {
   
   const closeZoom = () => {
     setZoomedImage(null);
+  };
+
+  // PDF Generation Function
+  const generatePDF = async () => {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = 210;
+    const pageHeight = 297;
+    
+    // Cover Page
+    pdf.setFontSize(36);
+    pdf.setTextColor(0, 123, 255); // Blue color
+    pdf.text('YMIR MIDDLE EAST', pageWidth / 2, 80, { align: 'center' });
+    
+    pdf.setFontSize(16);
+    pdf.setTextColor(108, 117, 125); // Gray color
+    pdf.text('STONES TRADING & EXPORT LLC', pageWidth / 2, 100, { align: 'center' });
+    
+    // Premium Materials Catalog title
+    pdf.setFontSize(12);
+    pdf.setTextColor(51, 51, 51); // Dark gray
+    pdf.text('Premium Materials Catalog', pageWidth / 2, 240, { align: 'center' });
+    
+    // Add new page for content
+    pdf.addPage();
+    
+    // Process each filtered stone
+    for (let i = 0; i < filteredStones.length; i++) {
+      const stone = filteredStones[i];
+      
+      if (i > 0) {
+        pdf.addPage();
+      }
+      
+      // Stone title
+      pdf.setFontSize(24);
+      pdf.setTextColor(51, 51, 51);
+      pdf.text(stone.name, 20, 30);
+      
+      // Draw line under title
+      pdf.setDrawColor(51, 51, 51);
+      pdf.line(20, 35, 190, 35);
+      
+      // Item name
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`Item Name: ${stone.name}`, 20, 50);
+      
+      // Technical specifications
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(12);
+      pdf.text('Technical Specifications:', 20, 80);
+      
+      const specs = [
+        `Category: ${stone.category}`,
+        `Rock type: ${stone.rock_type}`,
+        `Available finishes: ${stone.finishes}`,
+        `Available in: ${stone.available_in}`,
+        `Base color: ${stone.base_color}`,
+        `Characteristics: ${stone.characteristics}`
+      ];
+      
+      let yPosition = 95;
+      specs.forEach(spec => {
+        pdf.text(`• ${spec}`, 25, yPosition);
+        yPosition += 8;
+      });
+    }
+    
+    // Save the PDF
+    const fileName = `stones-catalog-${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(fileName);
   };
 
   // Calculate pagination
@@ -252,9 +324,20 @@ const StoneViewer = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">
-                Showing {filteredStones.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, filteredStones.length)} of {filteredStones.length} stones
-              </p>
+              <div className="flex items-center gap-4">
+                <p className="text-sm text-gray-600">
+                  Showing {filteredStones.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, filteredStones.length)} of {filteredStones.length} stones
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={generatePDF}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Download PDF
+                </Button>
+              </div>
               <Button variant="outline" size="sm" onClick={clearFilters}>
                 Clear Filters
               </Button>
