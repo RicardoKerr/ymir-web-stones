@@ -18,7 +18,7 @@ interface MosaicTileProps {
 export const MosaicTile: React.FC<MosaicTileProps> = ({ item }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const getSizeClasses = (size: string) => {
+  const getSizeClasses = (size: MosaicItem['size']) => {
     switch (size) {
       case 'large':
         return 'md:col-span-2 md:row-span-2';
@@ -28,6 +28,7 @@ export const MosaicTile: React.FC<MosaicTileProps> = ({ item }) => {
         return 'md:row-span-2';
       case 'medium':
         return 'md:col-span-1';
+      case 'small':
       default:
         return 'md:col-span-1';
     }
