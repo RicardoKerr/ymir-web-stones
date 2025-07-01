@@ -182,8 +182,29 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
     console.log('Stored hash length:', user.senha.length)
     console.log('Hash starts with:', user.senha.substring(0, 10))
     
-    const passwordValid = await compare(senha, user.senha)
-    console.log('Password validation result:', passwordValid)
+    let passwordValid = false;
+    
+    // Verificar se a senha é um hash bcrypt (começa com $2a$, $2b$, ou $2y$)
+    if (user.senha.startsWith('$2a$') || user.senha.startsWith('$2b$') || user.senha.startsWith('$2y$')) {
+      // Senha já está hashada, usar bcrypt compare
+      passwordValid = await compare(senha, user.senha)
+      console.log('Using bcrypt compare, result:', passwordValid)
+    } else {
+      // Senha ainda não está hashada (usuários antigos), comparar diretamente
+      passwordValid = senha === user.senha
+      console.log('Using direct compare, result:', passwordValid)
+      
+      // Se a senha está correta, vamos atualizá-la para o formato hash
+      if (passwordValid) {
+        console.log('Password correct, updating to hash format...')
+        const hashedPassword = await hash(senha)
+        await supabase
+          .from('aralogo_auth')
+          .update({ senha: hashedPassword })
+          .eq('id', user.id)
+        console.log('Password updated to hash format')
+      }
+    }
     
     if (!passwordValid) {
       console.log('Password validation failed')
