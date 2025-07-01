@@ -14,8 +14,7 @@ export const Header = () => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Mosaic</h1>
-              <p className="text-sm text-gray-300">Art Gallery</p>
+              <h1 className="text-2xl font-bold text-white">YMIR ME WEB STONES</h1>
             </div>
           </div>
 

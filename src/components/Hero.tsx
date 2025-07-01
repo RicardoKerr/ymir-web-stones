@@ -19,11 +19,7 @@ export const Hero = () => {
         <div className="space-y-8 animate-fade-in">
           <h1 className="text-6xl md:text-8xl font-bold text-white leading-tight">
             <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-              Mosaic
-            </span>
-            <br />
-            <span className="text-white/90">
-              Art Gallery
+              YMIR ME WEB STONES
             </span>
           </h1>
           
