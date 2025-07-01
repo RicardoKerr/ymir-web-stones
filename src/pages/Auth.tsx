@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,62 +11,49 @@ import { ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', senha: '' });
   const [signupData, setSignupData] = useState({ email: '', senha: '' });
+
+  // Redirecionar se já estiver autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/catalog';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data, error } = await supabase
-        .from('aralogo_auth')
-        .select('*')
-        .eq('email', loginData.email)
-        .eq('senha', loginData.senha)
-        .single();
-
-      if (error || !data) {
+      const result = await login(loginData.email, loginData.senha);
+      
+      if (!result.success) {
         toast({
-          title: "Login error",
-          description: "Incorrect email or password.",
+          title: "Erro de login",
+          description: result.error || "Erro inesperado durante login.",
           variant: "destructive",
         });
         return;
       }
 
-      if (data.status !== 'aprovado') {
-        toast({
-          title: "Acesso negado",
-          description: data.status === 'pendente' ? 
-            "Sua conta está pendente de aprovação." : 
-            "Sua conta foi recusada.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Save user data to localStorage
-      localStorage.setItem('aralogo_user', JSON.stringify({
-        id: data.id,
-        email: data.email,
-        is_admin: data.is_admin,
-        status: data.status
-      }));
-
-      const userType = data.is_admin ? 'administrador' : 'usuário';
+      const from = location.state?.from?.pathname || '/catalog';
       toast({
         title: "Login realizado com sucesso!",
-        description: `Bem-vindo, ${userType}! Redirecionando para catálogo.`,
+        description: "Redirecionando...",
       });
 
-      navigate('/catalog');
+      navigate(from, { replace: true });
     } catch (error) {
+      console.error('Erro no login:', error);
       toast({
-        title: "Error",
-        description: "Unexpected error during login.",
+        title: "Erro",
+        description: "Erro inesperado durante login.",
         variant: "destructive",
       });
     } finally {
@@ -78,41 +66,65 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('aralogo_auth')
-        .insert({
-          email: signupData.email,
-          senha: signupData.senha,
-          status: 'pendente'
+      // Validações básicas no frontend
+      if (!signupData.email || !signupData.senha) {
+        toast({
+          title: "Erro de validação",
+          description: "Email e senha são obrigatórios.",
+          variant: "destructive",
         });
+        return;
+      }
 
-      if (error) {
-        if (error.code === '23505') { // Unique constraint violation
-          toast({
-            title: "Registration error",
-            description: "This email is already registered.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Registration error",
-            description: error.message,
-            variant: "destructive",
-          });
+      if (signupData.senha.length < 8) {
+        toast({
+          title: "Erro de validação",
+          description: "Senha deve ter pelo menos 8 caracteres.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validação básica de email
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      if (!emailRegex.test(signupData.email)) {
+        toast({
+          title: "Erro de validação",
+          description: "Formato de email inválido.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Chamar Edge Function segura para registro
+      const { data, error } = await supabase.functions.invoke('auth-handler', {
+        body: {
+          action: 'register',
+          email: signupData.email.trim(),
+          senha: signupData.senha
         }
+      });
+
+      if (error || !data.success) {
+        toast({
+          title: "Erro de registro",
+          description: data?.error || "Erro inesperado durante registro.",
+          variant: "destructive",
+        });
         return;
       }
 
       toast({
-        title: "Registration successful!",
-        description: "Your account is pending approval. Wait for approval to access the catalog.",
+        title: "Registro realizado com sucesso!",
+        description: "Sua conta está pendente de aprovação. Aguarde a aprovação para acessar o catálogo.",
       });
 
       setSignupData({ email: '', senha: '' });
     } catch (error) {
+      console.error('Erro no registro:', error);
       toast({
-        title: "Error",
-        description: "Unexpected error during registration.",
+        title: "Erro",
+        description: "Erro inesperado durante registro.",
         variant: "destructive",
       });
     } finally {
