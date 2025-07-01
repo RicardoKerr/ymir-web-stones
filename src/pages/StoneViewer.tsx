@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Filter, Search, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Loader2, ChevronsLeft, ChevronsRight, Download } from 'lucide-react';
+import ColorCircles from '@/components/catalog/ColorCircles';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -392,7 +393,14 @@ const StoneViewer = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All colors</SelectItem>
-                  {colors.map(color => <SelectItem key={color} value={color}>{color}</SelectItem>)}
+                  {colors.map(color => (
+                    <SelectItem key={color} value={color}>
+                      <div className="flex items-center gap-2">
+                        <ColorCircles colorText={color} />
+                        <span>{color}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
