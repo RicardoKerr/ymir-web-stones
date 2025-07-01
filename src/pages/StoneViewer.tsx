@@ -230,7 +230,7 @@ const StoneViewer = () => {
         // Technical specifications (positioned below image)
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(12);
-        pdf.text('Technical Specifications:', 20, 140);
+        pdf.text('Technical Specifications:', 20, 165);
         
         const specs = [
           `Category: ${cleanText(stone.category)}`,
@@ -241,7 +241,7 @@ const StoneViewer = () => {
           `Characteristics: ${cleanText(stone.characteristics)}`
         ];
         
-        let yPosition = 155;
+        let yPosition = 180;
         const maxWidth = 165; // Maximum width for text (210 - 20 margin left - 25 margin right)
         
         specs.forEach(spec => {
