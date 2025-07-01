@@ -73,6 +73,7 @@ const StoneViewer = () => {
   const [rockTypeFilter, setRockTypeFilter] = useState('all');
   const [colorFilter, setColorFilter] = useState('all');
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -124,75 +125,121 @@ const StoneViewer = () => {
     setZoomedImage(null);
   };
 
+  // Function to load and convert image to base64
+  const loadImageAsBase64 = async (imageUrl: string): Promise<string | null> => {
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error('Failed to fetch image');
+      
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Error loading image:', error);
+      return null;
+    }
+  };
+
   // PDF Generation Function
   const generatePDF = async () => {
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = 210;
-    const pageHeight = 297;
+    setIsGeneratingPDF(true);
     
-    // Cover Page
-    pdf.setFontSize(36);
-    pdf.setTextColor(0, 123, 255); // Blue color
-    pdf.text('YMIR MIDDLE EAST', pageWidth / 2, 80, { align: 'center' });
-    
-    pdf.setFontSize(16);
-    pdf.setTextColor(108, 117, 125); // Gray color
-    pdf.text('STONES TRADING & EXPORT LLC', pageWidth / 2, 100, { align: 'center' });
-    
-    // Premium Materials Catalog title
-    pdf.setFontSize(12);
-    pdf.setTextColor(51, 51, 51); // Dark gray
-    pdf.text('Premium Materials Catalog', pageWidth / 2, 240, { align: 'center' });
-    
-    // Add new page for content
-    pdf.addPage();
-    
-    // Process each filtered stone
-    for (let i = 0; i < filteredStones.length; i++) {
-      const stone = filteredStones[i];
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 297;
       
-      if (i > 0) {
-        pdf.addPage();
+      // Cover Page
+      pdf.setFontSize(36);
+      pdf.setTextColor(0, 123, 255); // Blue color
+      pdf.text('YMIR MIDDLE EAST', pageWidth / 2, 80, { align: 'center' });
+      
+      pdf.setFontSize(16);
+      pdf.setTextColor(108, 117, 125); // Gray color
+      pdf.text('STONES TRADING & EXPORT LLC', pageWidth / 2, 100, { align: 'center' });
+      
+      // Premium Materials Catalog title
+      pdf.setFontSize(12);
+      pdf.setTextColor(51, 51, 51); // Dark gray
+      pdf.text('Premium Materials Catalog', pageWidth / 2, 240, { align: 'center' });
+      
+      // Add new page for content
+      pdf.addPage();
+      
+      // Process each filtered stone
+      for (let i = 0; i < filteredStones.length; i++) {
+        const stone = filteredStones[i];
+        
+        if (i > 0) {
+          pdf.addPage();
+        }
+        
+        // Stone title
+        pdf.setFontSize(24);
+        pdf.setTextColor(51, 51, 51);
+        pdf.text(stone.name, 20, 30);
+        
+        // Draw line under title
+        pdf.setDrawColor(51, 51, 51);
+        pdf.line(20, 35, 190, 35);
+        
+        // Item name
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`Item Name: ${stone.name}`, 20, 50);
+        
+        // Load and add stone image
+        const imageIdentifier = stone.image_name_site || stone.name;
+        const imageUrl = getImageUrl(imageIdentifier);
+        const imageBase64 = await loadImageAsBase64(imageUrl);
+        
+        if (imageBase64) {
+          try {
+            // Image dimensions and position
+            const imgWidth = 80; // mm
+            const imgHeight = 60; // mm
+            const imgX = (pageWidth - imgWidth) / 2; // Center horizontally
+            const imgY = 60; // Position below item name
+            
+            pdf.addImage(imageBase64, 'JPEG', imgX, imgY, imgWidth, imgHeight);
+          } catch (error) {
+            console.error('Error adding image to PDF:', error);
+          }
+        }
+        
+        // Technical specifications (positioned below image)
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(12);
+        pdf.text('Technical Specifications:', 20, 140);
+        
+        const specs = [
+          `Category: ${stone.category}`,
+          `Rock type: ${stone.rock_type}`,
+          `Available finishes: ${stone.finishes}`,
+          `Available in: ${stone.available_in}`,
+          `Base color: ${stone.base_color}`,
+          `Characteristics: ${stone.characteristics}`
+        ];
+        
+        let yPosition = 155;
+        specs.forEach(spec => {
+          pdf.text(`• ${spec}`, 25, yPosition);
+          yPosition += 8;
+        });
       }
       
-      // Stone title
-      pdf.setFontSize(24);
-      pdf.setTextColor(51, 51, 51);
-      pdf.text(stone.name, 20, 30);
-      
-      // Draw line under title
-      pdf.setDrawColor(51, 51, 51);
-      pdf.line(20, 35, 190, 35);
-      
-      // Item name
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`Item Name: ${stone.name}`, 20, 50);
-      
-      // Technical specifications
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(12);
-      pdf.text('Technical Specifications:', 20, 80);
-      
-      const specs = [
-        `Category: ${stone.category}`,
-        `Rock type: ${stone.rock_type}`,
-        `Available finishes: ${stone.finishes}`,
-        `Available in: ${stone.available_in}`,
-        `Base color: ${stone.base_color}`,
-        `Characteristics: ${stone.characteristics}`
-      ];
-      
-      let yPosition = 95;
-      specs.forEach(spec => {
-        pdf.text(`• ${spec}`, 25, yPosition);
-        yPosition += 8;
-      });
+      // Save the PDF
+      const fileName = `stones-catalog-${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    } finally {
+      setIsGeneratingPDF(false);
     }
-    
-    // Save the PDF
-    const fileName = `stones-catalog-${new Date().toISOString().split('T')[0]}.pdf`;
-    pdf.save(fileName);
   };
 
   // Calculate pagination
@@ -332,10 +379,20 @@ const StoneViewer = () => {
                   variant="outline" 
                   size="sm" 
                   onClick={generatePDF}
+                  disabled={isGeneratingPDF}
                   className="flex items-center gap-2"
                 >
-                  <Download className="h-4 w-4" />
-                  Download PDF
+                  {isGeneratingPDF ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Gerando PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4" />
+                      Download PDF
+                    </>
+                  )}
                 </Button>
               </div>
               <Button variant="outline" size="sm" onClick={clearFilters}>
