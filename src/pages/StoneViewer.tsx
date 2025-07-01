@@ -80,9 +80,9 @@ const StoneViewer = () => {
   const itemsPerPage = 9;
 
   // Extract unique values for filters, removing null or empty values
-  const categories = [...new Set(stones.map(stone => stone.category))].filter(Boolean);
-  const rockTypes = [...new Set(stones.map(stone => stone.rock_type))].filter(Boolean);
-  const colors = [...new Set(stones.map(stone => stone.base_color))].filter(Boolean);
+  const categories = [...new Set(stones.map(stone => stone.category))].filter(Boolean).sort();
+  const rockTypes = [...new Set(stones.map(stone => stone.rock_type))].filter(Boolean).sort();
+  const colors = [...new Set(stones.map(stone => stone.base_color))].filter(Boolean).sort();
 
   // Function to apply filters
   const applyFilters = () => {
