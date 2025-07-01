@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Edit, Trash2, Upload, ZoomIn } from 'lucide-react';
+import ColorCircles from './ColorCircles';
 import { Stone } from './types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
@@ -94,7 +95,13 @@ const StoneCard: React.FC<StoneCardProps> = ({
             <p><strong>Rock type:</strong> {stone.rock_type || 'N/A'}</p>
             <p><strong>Available finishes:</strong> {stone.finishes || 'N/A'}</p>
             <p><strong>Available in:</strong> {stone.available_in || 'N/A'}</p>
-            <p><strong>Base color:</strong> {stone.base_color || 'N/A'}</p>
+            <p>
+              <strong>Base color:</strong>
+              <div className="flex items-center gap-2 mt-1">
+                <ColorCircles colorText={stone.base_color || 'N/A'} />
+                <span>{stone.base_color || 'N/A'}</span>
+              </div>
+            </p>
             <p><strong>Characteristics:</strong> {stone.characteristics || 'N/A'}</p>
           </div>
         </div>

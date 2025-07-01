@@ -12,6 +12,7 @@ import FilterBar from '@/components/catalog/FilterBar';
 import StoneCard from '@/components/catalog/StoneCard';
 import StoneForm from '@/components/catalog/StoneForm';
 import ImageZoomModal from '@/components/catalog/ImageZoomModal';
+import ColorCircles from '@/components/catalog/ColorCircles';
 import { Filters, Stone, StoneFormData } from '@/components/catalog/types';
 import { useImageUpload } from '@/hooks/useImageUpload';
 
@@ -488,7 +489,13 @@ const Catalog = () => {
                           <li><strong>Rock type:</strong> {stone.rock_type}</li>
                           <li><strong>Available finishes:</strong> {stone.finishes}</li>
                           <li><strong>Available in:</strong> {stone.available_in}</li>
-                          <li><strong>Base color:</strong> {stone.base_color}</li>
+                          <li>
+                            <strong>Base color:</strong>
+                            <div className="flex items-center gap-2 mt-1">
+                              <ColorCircles colorText={stone.base_color} />
+                              <span>{stone.base_color}</span>
+                            </div>
+                          </li>
                           <li><strong>Characteristics:</strong> {stone.characteristics}</li>
                         </ul>
                       </div>
