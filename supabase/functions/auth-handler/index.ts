@@ -193,17 +193,7 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
       // Senha ainda não está hashada (usuários antigos), comparar diretamente
       passwordValid = senha === user.senha
       console.log('Using direct compare, result:', passwordValid)
-      
-      // Se a senha está correta, vamos atualizá-la para o formato hash
-      if (passwordValid) {
-        console.log('Password correct, updating to hash format...')
-        const hashedPassword = await hash(senha)
-        await supabase
-          .from('aralogo_auth')
-          .update({ senha: hashedPassword })
-          .eq('id', user.id)
-        console.log('Password updated to hash format')
-      }
+      // Nota: Não atualizamos automaticamente para hash para evitar erro de Worker no Deno
     }
     
     if (!passwordValid) {
