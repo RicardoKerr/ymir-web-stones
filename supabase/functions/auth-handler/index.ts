@@ -129,6 +129,10 @@ async function handleRegister(supabase: any, email: string, senha: string) {
 
 async function handleLogin(supabase: any, email: string, senha: string, req: Request) {
   try {
+    console.log('=== LOGIN ATTEMPT ===')
+    console.log('Email:', email)
+    console.log('Senha length:', senha?.length)
+    
     // Obter informações do cliente para logs
     const userAgent = req.headers.get('user-agent') || 'Unknown'
     const forwardedFor = req.headers.get('x-forwarded-for')
@@ -136,6 +140,7 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
 
     // Validar entrada
     if (!email || !senha) {
+      console.log('Validation failed: missing email or password')
       await logLoginAttempt(supabase, email || 'unknown', false, clientIP, userAgent)
       return new Response(
         JSON.stringify({ error: 'Email e senha são obrigatórios' }),
@@ -144,13 +149,26 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
     }
 
     // Buscar usuário
+    console.log('Searching for user:', email.toLowerCase().trim())
     const { data: user, error } = await supabase
       .from('aralogo_auth')
       .select('*')
       .eq('email', email.toLowerCase().trim())
       .single()
 
+    console.log('User query result:', { user: user ? 'found' : 'not found', error })
+    if (user) {
+      console.log('User details:', { 
+        id: user.id, 
+        email: user.email, 
+        status: user.status, 
+        is_admin: user.is_admin,
+        senha_hash_length: user.senha?.length 
+      })
+    }
+
     if (error || !user) {
+      console.log('User not found or database error:', error)
       await logLoginAttempt(supabase, email, false, clientIP, userAgent)
       return new Response(
         JSON.stringify({ error: 'Credenciais inválidas' }),
@@ -159,8 +177,16 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
     }
 
     // Verificar senha
+    console.log('Checking password...')
+    console.log('Plain password length:', senha.length)
+    console.log('Stored hash length:', user.senha.length)
+    console.log('Hash starts with:', user.senha.substring(0, 10))
+    
     const passwordValid = await compare(senha, user.senha)
+    console.log('Password validation result:', passwordValid)
+    
     if (!passwordValid) {
+      console.log('Password validation failed')
       await logLoginAttempt(supabase, email, false, clientIP, userAgent)
       return new Response(
         JSON.stringify({ error: 'Credenciais inválidas' }),
@@ -169,7 +195,9 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
     }
 
     // Verificar status
+    console.log('Checking user status:', user.status)
     if (user.status !== 'aprovado') {
+      console.log('User status not approved:', user.status)
       await logLoginAttempt(supabase, email, false, clientIP, userAgent)
       const message = user.status === 'pendente' ? 
         'Sua conta está pendente de aprovação.' : 
@@ -182,6 +210,7 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
     }
 
     // Login bem-sucedido
+    console.log('Login successful for user:', email)
     await logLoginAttempt(supabase, email, true, clientIP, userAgent)
 
     return new Response(
@@ -198,7 +227,10 @@ async function handleLogin(supabase: any, email: string, senha: string, req: Req
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Erro no login:', error)
+    console.error('=== LOGIN ERROR ===')
+    console.error('Error details:', error)
+    console.error('Error message:', error.message)
+    console.error('Error stack:', error.stack)
     return new Response(
       JSON.stringify({ error: 'Erro interno do servidor' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
