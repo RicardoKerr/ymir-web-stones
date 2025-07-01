@@ -31,14 +31,7 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/viewer" 
-              element={
-                <ProtectedRoute>
-                  <StoneViewer />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/viewer" element={<StoneViewer />} />
             <Route path="/auth" element={<Auth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
