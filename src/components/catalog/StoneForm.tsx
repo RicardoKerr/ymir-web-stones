@@ -23,6 +23,7 @@ interface StoneFormProps {
   existingCategories: string[];
   existingRockTypes: string[];
   existingColors: string[];
+  onNewImageSelect?: (file: File) => void; // NEW: used when adding a new stone
 }
 
 const StoneForm: React.FC<StoneFormProps> = ({
@@ -40,6 +41,7 @@ const StoneForm: React.FC<StoneFormProps> = ({
   existingCategories,
   existingRockTypes,
   existingColors,
+  onNewImageSelect,
 }) => {
   const title = isAddingNew ? 'Add New Stone' : 'Edit Stone';
   
@@ -145,6 +147,27 @@ const StoneForm: React.FC<StoneFormProps> = ({
                   className="min-h-[100px]"
                 />
               </div>
+
+              {isAddingNew && (
+                <div>
+                  <Label htmlFor="new_image_upload">Image</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="new_image_upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file && onNewImageSelect) {
+                          onNewImageSelect(file);
+                        }
+                      }}
+                    />
+                    {/* optional mini-indicator when parent is saving */}
+                    {isSaving && <Upload className="h-4 w-4 animate-spin" />}
+                  </div>
+                </div>
+              )}
             </div>
             
             {!isAddingNew && editingStone && (
@@ -178,7 +201,7 @@ const StoneForm: React.FC<StoneFormProps> = ({
                       accept="image/*"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        if (file) {
+                        if (file && editingStone) {
                           onImageUpload(file, editingStone.id);
                         }
                       }}

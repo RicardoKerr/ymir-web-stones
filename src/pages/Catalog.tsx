@@ -68,7 +68,8 @@ const Catalog = () => {
     base_color: '',
     characteristics: ''
   });
-  
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+
   useEffect(() => {
     const storedUser = localStorage.getItem('aralogo_user');
     if (storedUser) {
@@ -137,11 +138,12 @@ const Catalog = () => {
       base_color: '',
       characteristics: ''
     });
+    setNewImageFile(null);
   };
 
   // Add Stone Mutation
   const addStoneMutation = useMutation({
-    mutationFn: async (stoneData: StoneFormData) => {
+    mutationFn: async ({ stoneData, imageFile }: { stoneData: StoneFormData, imageFile?: File }) => {
       const { data, error } = await supabase
         .from('aralogo_simples')
         .insert([{
@@ -155,13 +157,34 @@ const Catalog = () => {
           'Enable_On_Off': true
         }])
         .select();
-      
+
       if (error) throw error;
-      return data;
+
+      const inserted = data && data.length > 0 ? data[0] : null;
+
+      // If an image was selected, upload and update the newly created row
+      if (inserted && imageFile) {
+        // Save using the original file name in storage for simplicity
+        const storageKey = imageFile.name;
+        const imageUrl = await uploadImage(imageFile, storageKey);
+
+        const { error: updateErr } = await supabase
+          .from('aralogo_simples')
+          .update({
+            'Caminho da Imagem': imageUrl,
+            'Imagem_Name_Site': storageKey
+          })
+          .eq('id', Number(inserted.id));
+
+        if (updateErr) throw updateErr;
+      }
+
+      return inserted;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['aralogo_simples'] });
       setIsFormOpen(false);
+      setEditingStone(null);
       resetForm();
       toast({
         title: "Pedra adicionada com sucesso!",
@@ -192,7 +215,7 @@ const Catalog = () => {
           'Cor Base': stoneData.base_color,
           'Características': stoneData.characteristics
         })
-        .eq('Nome', id)
+        .eq('id', Number(id))
         .select();
       
       if (error) throw error;
@@ -224,7 +247,7 @@ const Catalog = () => {
       const { error } = await supabase
         .from('aralogo_simples')
         .delete()
-        .eq('Nome', id);
+        .eq('id', Number(id));
       
       if (error) throw error;
     },
@@ -282,7 +305,7 @@ const Catalog = () => {
     if (editingStone) {
       updateStoneMutation.mutate({ id: editingStone.id, stoneData: formData });
     } else {
-      addStoneMutation.mutate(formData);
+      addStoneMutation.mutate({ stoneData: formData, imageFile: newImageFile || undefined });
     }
   };
 
@@ -296,7 +319,8 @@ const Catalog = () => {
     setUploadingImages(prev => new Set(prev).add(stoneId));
     
     try {
-      const imageUrl = await uploadImage(file, stoneId);
+      // Use the original file name as storage key; keep consistent with new stone flow
+      const imageUrl = await uploadImage(file, file.name);
       
       const { error } = await supabase
         .from('aralogo_simples')
@@ -304,7 +328,7 @@ const Catalog = () => {
           'Caminho da Imagem': imageUrl,
           'Imagem_Name_Site': file.name
         })
-        .eq('Nome', stoneId);
+        .eq('id', Number(stoneId));
 
       if (error) throw error;
 
@@ -530,6 +554,7 @@ const Catalog = () => {
               existingCategories={existingCategories}
               existingRockTypes={existingRockTypes}
               existingColors={existingColors}
+              onNewImageSelect={(file) => setNewImageFile(file)}
             />
           </DialogContent>
         </Dialog>
