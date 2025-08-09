@@ -52,7 +52,7 @@ export const SecurityAlerts = () => {
           if (!acc[ip]) acc[ip] = [];
           acc[ip].push(attempt);
           return acc;
-        }, {} as Record<string, any[]>);
+        }, {} as Record<string, typeof failedLogins>);
 
         // Create alerts for suspicious activity
         Object.entries(ipGroups).forEach(([ip, attempts]) => {
@@ -73,7 +73,7 @@ export const SecurityAlerts = () => {
           if (!acc[email]) acc[email] = [];
           acc[email].push(attempt);
           return acc;
-        }, {} as Record<string, any[]>);
+        }, {} as Record<string, typeof failedLogins>);
 
         Object.entries(emailGroups).forEach(([email, attempts]) => {
           if (attempts.length >= 3) {
