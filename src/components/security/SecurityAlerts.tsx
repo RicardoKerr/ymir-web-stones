@@ -47,12 +47,12 @@ export const SecurityAlerts = () => {
         const newAlerts: SecurityAlert[] = [];
         
         // Group failed attempts by IP
-        const ipGroups = failedLogins.reduce((acc, attempt) => {
-          const ip = attempt.ip_address || 'unknown';
-          if (!acc[ip]) acc[ip] = [];
-          acc[ip].push(attempt);
-          return acc;
-        }, {} as Record<string, typeof failedLogins>);
+        const ipGroups: Record<string, any[]> = {};
+        failedLogins.forEach(attempt => {
+          const ip = String(attempt.ip_address || 'unknown');
+          if (!ipGroups[ip]) ipGroups[ip] = [];
+          ipGroups[ip].push(attempt);
+        });
 
         // Create alerts for suspicious activity
         Object.entries(ipGroups).forEach(([ip, attempts]) => {
@@ -68,12 +68,12 @@ export const SecurityAlerts = () => {
         });
 
         // Group by email
-        const emailGroups = failedLogins.reduce((acc, attempt) => {
-          const email = attempt.email;
-          if (!acc[email]) acc[email] = [];
-          acc[email].push(attempt);
-          return acc;
-        }, {} as Record<string, typeof failedLogins>);
+        const emailGroups: Record<string, any[]> = {};
+        failedLogins.forEach(attempt => {
+          const email = String(attempt.email);
+          if (!emailGroups[email]) emailGroups[email] = [];
+          emailGroups[email].push(attempt);
+        });
 
         Object.entries(emailGroups).forEach(([email, attempts]) => {
           if (attempts.length >= 3) {
